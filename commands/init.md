@@ -138,12 +138,12 @@ Managed by doctidy.
 ## Commands
 
 ```bash
-/skill doctidy "status"   # View status
-/skill doctidy "score"     # Score repository
-/skill doctidy "intake"    # Process new files
-/skill doctidy "analyze"   # Analyze issues
-/skill doctidy "organize"  # Clean up
-/skill doctidy "reset"      # Remove doctidy
+/doctidy "status"   # View status
+/doctidy "score"     # Score repository
+/doctidy "intake"    # Process new files
+/doctidy "analyze"   # Analyze issues
+/doctidy "organize"  # Clean up
+/doctidy "reset"      # Remove doctidy
 ```
 ```
 
@@ -175,7 +175,7 @@ Created:
 - README.md ✅
 - _index/registry.yaml ✅
 
-Doctidy is ready! Run `/skill doctidy "status"` to verify.
+Doctidy is ready! Run `/doctidy "status"` to verify.
 ```
 
 ## Safety

@@ -23,11 +23,11 @@ Designed for both human users and AI agents working in shared document spaces.
 **A**: Use the `/skill` command:
 
 ```bash
-/skill doctidy "score"
-/skill doctidy "analyze"
-/skill doctidy "organize"
-/skill doctidy "intake"
-/skill doctidy "status"
+/doctidy "score"
+/doctidy "analyze"
+/doctidy "organize"
+/doctidy "intake"
+/doctidy "status"
 ```
 
 ---
@@ -172,7 +172,7 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 
 **A**: Three ways:
 
-1. **Specify in command**: `/skill doctidy "score /path/to/docs"`
+1. **Specify in command**: `/doctidy "score /path/to/docs"`
 2. **Current directory**: cd to target, then run command
 3. **First use**: Skill will prompt for path
 
@@ -180,7 +180,7 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 
 ### Q: How to change cached path?
 
-**A**: Run: `/skill doctidy "set target to /new/path"`
+**A**: Run: `/doctidy "set target to /new/path"`
 
 ---
 
@@ -223,7 +223,7 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 ### Q: Skill not triggering?
 
 **A**: Try:
-- Explicit trigger: `/skill doctidy "..."`
+- Explicit trigger: `/doctidy "..."`
 - Check skill is installed: `/skills list`
 - Check description matches: skill triggers on relevant keywords
 

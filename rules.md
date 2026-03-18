@@ -135,12 +135,12 @@ lastUsed: YYYY-MM-DD
 
 3. **Override**: User can always specify a different path:
 ```bash
-/skill doctidy "score /new/path"
+/doctidy "score /new/path"
 ```
 
 4. **Invalidation**: User can reset:
 ```bash
-/skill doctidy "set target to /new/path"
+/doctidy "set target to /new/path"
 ```
 
 ### Safety

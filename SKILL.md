@@ -13,13 +13,13 @@ A document tidying skill that brings order to chaos - providing scoring, analysi
 
 | Command | Trigger Words | Description |
 |---------|--------------|-------------|
-| `/skill doctidy "init"` | init, initialize, setup, install | Initialize doctidy infrastructure |
-| `/skill doctidy "score"` | score, scoring, rate, health check | Score the document repository |
-| `/skill doctidy "analyze"` | analyze, diagnose, audit | Deep analysis of issues |
-| `/skill doctidy "organize"` | organize, cleanup, clean up | Execute cleanup operations |
-| `/skill doctidy "intake"` | intake, categorize, sort files | Auto-categorize new files |
-| `/skill doctidy "status"` | status, quick status | Quick status view |
-| `/skill doctidy "reset"` | reset, uninstall, remove indexes | Remove all doctidy created files |
+| `/doctidy "init"` | init, initialize, setup, install | Initialize doctidy infrastructure |
+| `/doctidy "score"` | score, scoring, rate, health check | Score the document repository |
+| `/doctidy "analyze"` | analyze, diagnose, audit | Deep analysis of issues |
+| `/doctidy "organize"` | organize, cleanup, clean up | Execute cleanup operations |
+| `/doctidy "intake"` | intake, categorize, sort files | Auto-categorize new files |
+| `/doctidy "status"` | status, quick status | Quick status view |
+| `/doctidy "reset"` | reset, uninstall, remove indexes | Remove all doctidy created files |
 
 ---
 

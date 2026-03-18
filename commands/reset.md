@@ -122,7 +122,7 @@ Your files in knowledge/, projects/, private/ are intact.
 ## FAQ After Reset
 
 ### Q: Can I use doctidy again after reset?
-**A**: Yes. Run `/skill doctidy "intake"` to reinitialize and start fresh.
+**A**: Yes. Run `/doctidy "intake"` to reinitialize and start fresh.
 
 ### Q: Will my documents be deleted?
 **A**: No. Only doctidy created infrastructure (_index, _inbox, _trash, _unsupported) is removed. Your documents in knowledge/, projects/, private/ are unaffected.
