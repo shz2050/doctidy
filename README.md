@@ -6,7 +6,8 @@ A document tidying skill that brings order to chaos. Designed for both human use
 
 - **Scoring System**: Evaluate document organization quality with detailed metrics
 - **Entropy Control**: Prevent document chaos with automated rules
-- **Auto-categorization**: Automatically classify and organize new files
+- **Content-Based Categorization**: Analyzes file content, not folder names
+- **Folder-Agnostic**: Works with YOUR folder structure - no enforced conventions
 - **Agent-Ready**: Designed for AI agent readability and usage
 - **Path-Agnostic**: No hardcoded paths - works with any target directory
 

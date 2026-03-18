@@ -10,24 +10,25 @@ Common questions about doctidy skill.
 
 **A**: A document repository management skill for Claude that provides:
 - Scoring and evaluation of document organization
-- Automated cleanup and organization
-- File intake and auto-categorization
+- Automated cleanup and organization based on content analysis
+- File intake and auto-categorization (content-based, not folder-based)
 - Status monitoring
 
-Designed for both human users and AI agents working in shared document spaces.
+Designed for both human users and AI agents working in shared document spaces. Adapts to YOUR folder structure.
 
 ---
 
 ### Q: How do I use this skill?
 
-**A**: Use the `/skill` command:
+**A**: Use the `/doctidy` command:
 
 ```bash
-/doctidy "score"
-/doctidy "analyze"
-/doctidy "organize"
-/doctidy "intake"
-/doctidy "status"
+/doctidy "status"   # View status
+/doctidy "score"     # Score repository
+/doctidy "intake"    # Process new files
+/doctidy "analyze"   # Analyze issues
+/doctidy "organize"  # Clean up
+/doctidy "reset"     # Remove doctidy
 ```
 
 ---
@@ -40,6 +41,16 @@ Designed for both human users and AI agents working in shared document spaces.
 2. User-specified path
 3. Current working directory
 4. Prompt user if none available
+
+---
+
+### Q: Does doctidy enforce a specific folder structure?
+
+**A**: No. Doctidy is completely folder-agnostic. It:
+- Scans YOUR existing folder structure
+- Records it in registry.yaml
+- Works with whatever organization you have
+- Never forces you to use specific folder names
 
 ---
 
@@ -75,51 +86,17 @@ See `commands/score.md` for detailed criteria.
 
 ---
 
-### Q: Score dropped after cleanup?
-
-**A**: Possible reasons:
-- New files added without categorization
-- Temporary files left behind
-- Index files not updated
-
-Run `analyze` to identify the cause.
-
----
-
-## Duplicates
-
-### Q: How to handle duplicate files?
-
-**A**: Priority order:
-
-1. **User Decision**: You explicitly choose which to keep
-2. **Business Relevance**: Keep business-critical files
-3. **Recency**: Keep most recently modified
-4. **Size**: Keep larger file
-
-Default strategy: Keep business-relevant directory.
-
----
-
-### Q: Why did my duplicate files get deleted?
-
-**A**: When running `organize`, you were shown a list of planned deletions and asked to confirm. If you approved, duplicates were moved to `_trash/`.
-
-Check `_trash/` to restore if needed.
-
----
-
 ## Intake
 
-### Q: File wasn't auto-categorized correctly?
+### Q: How does auto-categorization work?
 
-**A**: The auto-categorization uses keyword matching. If your filename doesn't contain recognized keywords, it will be flagged for manual categorization.
+**A**: Content-based, not folder-based:
+1. Reads the file content
+2. Extracts keywords and determines file type
+3. Finds similar existing files in YOUR structure
+4. Suggests the best matching location
 
-**Tips for better results**:
-- Use descriptive filenames with keywords
-- Include category indicators (e.g., `demand-mining-...`, `progress-...`)
-
-**To customize**: Edit the keyword table in `commands/intake.md`.
+If no match found, asks you where to place the file.
 
 ---
 
@@ -156,16 +133,6 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 
 ---
 
-### Q: How to add custom categorization rules?
-
-**A**: Edit `commands/intake.md` and add entries to the keyword matching table:
-
-```markdown
-| my-keyword | {TARGET}/my-custom-dir/ |
-```
-
----
-
 ## Path & Configuration
 
 ### Q: How to set target directory?
@@ -186,7 +153,7 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 
 ### Q: Can I use this with any directory structure?
 
-**A**: Yes. The skill is path-agnostic and works with any structure. The default directory structure is recommended but customizable.
+**A**: Yes. The skill is folder-agnostic and works with any structure. It scans whatever exists and adapts to your organization.
 
 ---
 
@@ -197,9 +164,10 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 **A**: Agents should:
 
 1. Read `{TARGET}/README.md` on first access
-2. Check `{TARGET}/_inbox/pending/` for new files
-3. Create output in appropriate locations
-4. Follow entropy control rules (see `rules.md`)
+2. Read `{TARGET}/_index/registry.yaml` to understand YOUR structure
+3. Check `{TARGET}/_inbox/pending/` for new files
+4. Create output based on content analysis
+5. Follow entropy control rules (see `rules.md`)
 
 ---
 
@@ -212,7 +180,7 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 ### Q: Human user doesn't follow conventions?
 
 **A**: The design tolerates this. Features include:
-- Index expiration mechanism
+- Index rescanning on init
 - Fallback directory scanning
 - Forgiving categorization
 
@@ -233,8 +201,7 @@ When intake encounters these files, they are moved to `{TARGET}/_unsupported/`.
 
 **A**: Check:
 1. `{TARGET}` path is correct
-2. Required subdirectories exist
-3. Run `status` to diagnose
+2. Run `/doctidy "status"` to diagnose
 
 ---
 

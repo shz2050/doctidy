@@ -1,6 +1,6 @@
 # Intake Command
 
-Process new file entry, auto-categorize or ask for direction.
+Process new file entry, auto-categorize based on content analysis.
 
 ## Trigger Words
 
@@ -10,9 +10,13 @@ Process new file entry, auto-categorize or ask for direction.
 
 `{TARGET}` path must be determined
 
+## Core Philosophy
+
+**Content-based, not folder-based.** The skill analyzes WHAT a file IS (content, type, topic) and finds the best matching location in your existing folder structure. It does NOT enforce any predefined folder names.
+
 ## File Categories
 
-### Claude Can Read (Auto-Categorizable)
+### Claude Can Read (Content Analysis Available)
 
 | Category | Extensions |
 |----------|------------|
@@ -24,16 +28,16 @@ Process new file entry, auto-categorize or ask for direction.
 | Config | `.env`, `.ini`, `.cfg`, `.conf`, `.properties` |
 | Other | `.tex`, `.rtf` |
 
-### Claude Cannot Read (Manual Required → `_unsupported/`)
+### Claude Cannot Read (Manual Required)
 
-| Category | Extensions |
-|----------|------------|
-| PDF | `.pdf` |
-| Office | `.docx`, `.xlsx`, `.pptx`, `.doc`, `.xls`, `.ppt` |
+| Category | Extensions | Destination |
+|----------|------------|-------------|
+| PDF | `.pdf` | `_unsupported/` |
+| Office | `.docx`, `.xlsx`, `.pptx`, `.doc`, `.xls`, `.ppt` | `_unsupported/` |
 
 ### Ignored Files (Keep Original Location)
 
-These files are **completely ignored** - never moved or tracked:
+These files are **never moved or tracked**:
 
 | Category | Extensions |
 |----------|------------|
@@ -47,11 +51,10 @@ These files are **completely ignored** - never moved or tracked:
 
 ```
 New File → Check readability
-  ├── Can read → Analyze filename + content → Match directories
-  │     ├── Match found → Suggest move to X directory
-  │     └── No match → Ask user OR suggest new category
+  ├── Can read → Analyze content + context → Match to existing folders
+  │     ├── Match found → Suggest move to matching folder
+  │     └── No match → Ask user for direction
   └── Cannot read → Move to _unsupported/ → User manual process
-        └── User done → File leaves _unsupported/, no longer tracked
 ```
 
 ## Execution Steps
@@ -71,119 +74,146 @@ Separate files into:
 ### Step 3: Analyze Readable Files
 
 For each readable file:
-1. **Filename** - extract keywords
-2. **Content** - read first 10 lines for context
-3. **Extension** - determine file type
-4. **Match** - apply keyword rules + extension rules
+1. **Read content** - analyze the actual content (first 20 lines)
+2. **Extract keywords** - what topics/subjects are mentioned
+3. **Determine type** - note, code, config, data, etc.
+4. **Find similar files** - look for files with similar content/type in your folders
+5. **Match to location** - find best existing folder match
 
-### Step 4: Handle Unsupported Files
+### Step 4: Content Analysis Algorithm
+
+```
+For each file in _inbox/pending/:
+
+1. If extension is code-like (.py, .js, .ts, etc.)
+   → Look for folders containing similar code files
+   → Suggest moving to the matching code folder
+
+2. If extension is data (.csv, .json, .yaml, etc.)
+   → Look for folders containing similar data files
+   → Suggest moving to the matching data folder
+
+3. If extension is config (.env, .ini, etc.)
+   → Look for project folders that might need this config
+   → Suggest moving near related project
+
+4. If extension is markup/text (.md, .txt, etc.)
+   → Read content, extract topics
+   → Look for folders with similar topic files
+   → Match by keyword similarity
+```
+
+### Step 5: Handle Unsupported Files
 
 Move to `{TARGET}/_unsupported/`:
 - These files need manual review
 - User decides final location
 - Once moved out, no longer tracked by skill
 
-### Step 5: Output Report
+### Step 6: Output Report
 
 ```markdown
-## Readable Files (X) - Auto-categorization
+## Intake Report
+Target: {TARGET}
+Date: YYYY-MM-DD
 
-| File | Analysis | Suggested Action |
-|------|----------|------------------|
-| report.md | Keyword: demand | → knowledge/demand-mining/ |
-| data.csv | Tabular data | → projects/analytics/ |
+### Readable Files (X) - Content Analysis
 
-## Unsupported Files (X) - Manual Required
+| File | Type | Analysis | Suggested Location |
+|------|------|----------|-------------------|
+| design.md | markdown | UI/UX notes | → ~/docs/notes/ui-design/ (similar files exist) |
+| api.py | python | API code | → ~/docs/projects/web-api/ (same project) |
+| data.csv | csv | Sales data | → ~/docs/analytics/ (similar files exist) |
 
-| File | Type | Reason |
+### Unsupported Files (X) - Manual Required
+
+| File | Type | Action |
 |------|------|--------|
-| report.pdf | pdf | Cannot read content |
-| data.xlsx | xlsx | Cannot read content |
+| report.pdf | pdf | → _unsupported/ (manual review needed) |
+| budget.xlsx | xlsx | → _unsupported/ (manual review needed) |
 
-## Confirmation
-Execute move operations? (yes/no/select)
+### Confirmation
+Execute moves? (yes/no/select)
 ```
 
-### Step 6: Execute Moves
+### Step 7: Execute Moves
 
 1. Move auto-categorized files to suggested locations
 2. Move unsupported files to `{TARGET}/_unsupported/`
 3. Update report with final status
 
-## Auto-Categorization Rules (Readable Files)
+## When No Match Found
 
-### By Keyword (Primary)
-
-| Keywords | Target Directory |
-|----------|-----------------|
-| demand, mining, 挖掘 | `{TARGET}/knowledge/demand-mining/` |
-| demand, mining, business, 商业 | `{TARGET}/knowledge/business-demand-mining/` |
-| progress, daily, 周报, 日报 | `{TARGET}/knowledge/progress/` |
-| weekly, 周报 | `{TARGET}/knowledge/progress/weekly/` |
-| monthly, 月报 | `{TARGET}/knowledge/progress/monthly/` |
-| brainstorm, idea, 创意, 脑暴 | `{TARGET}/knowledge/brainstorm/` |
-| competitor, research, 竞品, 调研 | `{TARGET}/knowledge/competitor-research/` or `{TARGET}/projects/{project}/` |
-| methodology, 方法论 | `{TARGET}/knowledge/methodology/` |
-| reading, book, notes, 阅读 | `{TARGET}/knowledge/reading/` |
-| agent name (scaptain/flowstage/xhs) | `{TARGET}/knowledge/agents/{agent}/` |
-| product, feature, PRD | `{TARGET}/knowledge/products/` |
-| marketing, promotion, 营销 | `{TARGET}/knowledge/marketing/` |
-| private, secret, 个人 | `{TARGET}/private/` |
-
-### By Extension (Fallback)
-
-| Extension | Target Directory |
-|-----------|-------------------|
-| `.md`, `.markdown`, `.rst`, `.org` | `knowledge/` |
-| `.txt`, `.text`, `.log` | `knowledge/` or `projects/` |
-| `.csv`, `.tsv` | `projects/analytics/` or `knowledge/data/` |
-| `.json`, `.yaml`, `.yml`, `.toml` | `projects/` or `knowledge/config/` |
-| `.py`, `.js`, `.ts` | `projects/code/` or `agents/{name}/` |
-| `.html`, `.css`, `.scss` | `projects/web/` |
-| `.env`, `.ini`, `.cfg` | `projects/config/` |
-
-## Unsupported Files Handling
-
-### Directory
+If content analysis finds no suitable existing folder:
 
 ```
-{TARGET}/_unsupported/
-├── README.txt      # Instructions for manual processing
-└── [unsupported files...]
+Cannot find similar files/folders for `notes.txt`.
+
+Options:
+1. Create new folder: [input folder name]
+2. Choose existing folder:
+   [list of top-level folders in {TARGET}]
+3. Leave in _inbox/pending/ for now
 ```
 
-### README.txt Content
+## Auto-Categorization Examples
+
+### Example 1: Code File
 
 ```
-These files could not be automatically processed because Claude cannot read their content.
-
-Please manually:
-1. Review each file
-2. Move to appropriate directory
-3. Once moved out of _unsupported/, these files will no longer be tracked
-
-Supported types that were moved here:
-- .pdf (binary document)
-- .docx, .xlsx, .pptx (modern Office)
-- .doc, .xls, .ppt (legacy Office)
+File: auth.py
+Content: Python code with JWT authentication
+Analysis: Authentication module
+Result: Find ~/projects/web-app/ with similar Python files → Suggest: ~/projects/web-app/auth.py
 ```
 
-### Important Note
-
-> **Once files leave _unsupported/, they are no longer tracked by doctidy.**
-> The skill will not remind you about these files again. Please move them to permanent locations manually.
-
-## When Categorization Fails (Readable Files)
-
-If no match found, ask user:
+### Example 2: Data File
 
 ```
-Cannot categorize `notes.txt`. Choose target:
-1. knowledge/
-2. projects/
-3. Create new directory: [input name]
-4. Leave in _inbox/pending/ for now
+File: customers-2026.csv
+Content: CSV with customer data (name, email, purchase history)
+Analysis: Customer data/spreadsheet
+Result: Find ~/analytics/customer-data/ with similar CSVs → Suggest: ~/analytics/customer-data/
 ```
+
+### Example 3: Notes
+
+```
+File: meeting-notes.md
+Content: Meeting notes about Q2 planning, mentions "marketing", "launch"
+Analysis: Meeting notes about marketing campaign
+Result: Find ~/documents/meetings/campaign-planning/ with similar meeting notes → Suggest that folder
+```
+
+### Example 4: No Match Found
+
+```
+File: random-thoughts.txt
+Content: Personal notes, mixed topics
+Analysis: General notes, no clear category
+Result: No similar files found → Ask user where to place
+```
+
+## Keyword-Based Fallback
+
+When content analysis is inconclusive, use filename keywords:
+
+| Keywords | Meaning |
+|----------|---------|
+| config, setting, env | Configuration file |
+| draft, note, idea, thought | Notes/drafts |
+| report, summary, overview | Reports |
+| code, src, module | Source code |
+| data, csv, stats | Data files |
+| meeting, minutes | Meeting notes |
+| todo, task, checklist | Task lists |
+
+## Important Notes
+
+1. **No enforced structure** - The skill adapts to YOUR folder organization
+2. **Content first** - Analyzes actual file content, not just filename
+3. **Similarity matching** - Finds folders with similar existing files
+4. **User always decides** - Can override any suggestion
 
 ## Output Format
 
@@ -192,40 +222,20 @@ Cannot categorize `notes.txt`. Choose target:
 Target: {TARGET}
 Date: YYYY-MM-DD
 
-## Auto-Categorized Files (X)
+## Auto-Categorized (X files)
 
-| File | Type | Analysis | Action |
-|------|------|----------|--------|
-| file1.md | markdown | Keywords: X | → path/ |
-| file2.csv | csv | Data file | → projects/ |
+| File | Analysis | Destination |
+|------|----------|-------------|
+| file1.md | Topic: X, Type: note | → ~/docs/folder/ |
 
-## Unsupported Files (X) - Manual Required
+## Manual Review Required (X files)
 
-| File | Type | Reason |
-|------|------|--------|
-| file3.pdf | pdf | Content not readable |
-| file4.xlsx | xlsx | Content not readable |
+| File | Type | Location |
+|------|------|----------|
+| file2.pdf | pdf | _unsupported/ |
 
 ## Summary
+- Processed: X
 - Auto-categorized: X
 - Manual required: X
-
-## Confirmation
-Move auto-categorized files and unsupported files to _unsupported/? (yes/no/select)
 ```
-
-## Special Handling
-
-### Poor Filenames (Readable Files)
-If filename is non-descriptive (e.g., `新建文件 (1).txt`, `untitled.md`):
-- Ask user to rename before categorizing
-
-### Agent-Created Files
-If file is created by agent (detected from path or metadata):
-- Keep in agent's working directory
-- Suggest appropriate subdirectory
-
-### Duplicate Names
-If target location has file with same name:
-- Suggest renaming strategy
-- Ask user preference

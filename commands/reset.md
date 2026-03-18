@@ -17,7 +17,7 @@ Remove all doctidy created files and directories from `{TARGET}`.
 > - `{TARGET}/_unsupported/` (including all unsupported files)
 > - `{TARGET}/README.md` (if created by doctidy)
 >
-> **User files are NOT affected.** Only skill-created infrastructure is removed.
+> **User files are NOT affected.** Only doctidy-created infrastructure is removed.
 
 ## Precondition
 
@@ -27,22 +27,22 @@ Remove all doctidy created files and directories from `{TARGET}`.
 
 | Directory/File | Content | Removed? |
 |---------------|---------|-----------|
-| `_index/` | registry.yaml, score.md | ✅ Yes |
-| `_inbox/` | pending files staged for intake | ✅ Yes |
-| `_trash/` | deleted files staging area | ✅ Yes |
-| `_unsupported/` | unsupported files awaiting manual review | ✅ Yes |
+| `_index/` | registry.yaml, score.md | ✅ Yes (doctidy system) |
+| `_inbox/` | pending files staging area | ✅ Yes (doctidy system) |
+| `_trash/` | deleted files staging area | ✅ Yes (doctidy system) |
+| `_unsupported/` | unsupported files awaiting manual review | ✅ Yes (doctidy system) |
 | `README.md` | doctidy entry documentation | ✅ If created by skill |
 | **User files** | Your actual documents | ❌ NO |
-| **User directories** | knowledge/, projects/, private/, etc. | ❌ NO |
+| **User directories** | YOUR folder structure | ❌ NO |
 
 ## What Stays
 
 ```
 {TARGET}/
-├── knowledge/        # Your documents - NOT affected
-├── projects/         # Your projects - NOT affected
-├── private/          # Your private data - NOT affected
-└── [other user dirs] # Any user-created content - NOT affected
+├── [your-folder-a]/        # Your documents - NOT affected
+├── [your-folder-b]/        # Your structure - NOT affected
+├── [your-subfolder/]       # Whatever you have - NOT affected
+└── [other user dirs]       # Any user-created content - NOT affected
 ```
 
 ## Execution Flow
@@ -60,18 +60,18 @@ The following doctidy created files will be PERMANENTLY DELETED:
 ### Directories to Remove
 | Directory | Contents |
 |-----------|---------|
-| _index/ | 2 files (registry.yaml, score.md) |
-| _inbox/ | 3 files |
-| _trash/ | 5 files |
-| _unsupported/ | 2 files |
+| _index/ | registry.yaml, score.md |
+| _inbox/ | X files |
+| _trash/ | X files |
+| _unsupported/ | X files |
 
 ### Files to Remove
 - README.md (if created by doctidy)
 
 ### This Will NOT Be Removed
-- knowledge/
-- projects/
-- private/
+- [your-folder-a]/
+- [your-folder-b]/
+- [your-subfolder/]
 - All your user files and directories
 ```
 
@@ -109,7 +109,7 @@ Removed:
 - _unsupported/ ✅
 - README.md ✅
 
-Your files in knowledge/, projects/, private/ are intact.
+Your files in [your folders] are intact.
 ```
 
 ## Safety Checks
@@ -117,15 +117,15 @@ Your files in knowledge/, projects/, private/ are intact.
 1. **Confirm target path** - Double-check `{TARGET}` is correct
 2. **List what will be removed** - Show user before confirmation
 3. **Require explicit confirmation** - User must type "yes, reset"
-4. **Verify user files remain** - Confirm knowledge/, projects/, private/ still exist
+4. **Verify user files remain** - Confirm your folder structure still exists
 
 ## FAQ After Reset
 
 ### Q: Can I use doctidy again after reset?
-**A**: Yes. Run `/doctidy "intake"` to reinitialize and start fresh.
+**A**: Yes. Run `/doctidy "init"` to reinitialize and start fresh.
 
 ### Q: Will my documents be deleted?
-**A**: No. Only doctidy created infrastructure (_index, _inbox, _trash, _unsupported) is removed. Your documents in knowledge/, projects/, private/ are unaffected.
+**A**: No. Only doctidy created infrastructure (_index, _inbox, _trash, _unsupported) is removed. Your documents in your folders are unaffected.
 
 ### Q: How do I recover from an accidental reset?
 **A**: If using git, you can restore from git history:

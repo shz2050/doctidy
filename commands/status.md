@@ -10,18 +10,31 @@ Quick view of document repository status.
 
 `{TARGET}` path must be determined
 
+## Core Philosophy
+
+**Folder-agnostic.** Status shows YOUR actual folder structure, not a predefined one.
+
 ## What to Check
 
 ### Basic Stats
 ```bash
-# File count
-find {TARGET} -name "*.md" -type f ! -path "*/.*" | wc -l
+# File count by type
+find {TARGET} -type f \
+  ! -path "*/_index/*" \
+  ! -path "*/_inbox/*" \
+  ! -path "*/_trash/*" \
+  ! -path "*/_unsupported/*" \
+  ! -path "*/.git/*" \
+  -name "*.md" | wc -l
 
-# Directory count
-find {TARGET} -type d ! -path "*/.*" ! -path "*/.git/*" | wc -l
-
-# Agent directories (if exists)
-ls {TARGET}/knowledge/agents/ 2>/dev/null | wc -l
+# Directory count (excluding system folders)
+find {TARGET} -type d \
+  ! -path "*/_index/*" \
+  ! -path "*/_inbox/*" \
+  ! -path "*/_trash/*" \
+  ! -path "*/_unsupported/*" \
+  ! -path "*/.git/*" \
+  ! -path "*/.*" | wc -l
 ```
 
 ### Key Files Check
@@ -34,10 +47,21 @@ ls {TARGET}/knowledge/agents/ 2>/dev/null | wc -l
 ### Issue Counts
 ```bash
 # Duplicate groups
-find {TARGET} -name "*.md" -type f | xargs -I{} basename {} | sort | uniq -c | sort -rn | awk '$1 > 1'
+find {TARGET} -type f \
+  ! -path "*/_index/*" \
+  ! -path "*/_inbox/*" \
+  ! -path "*/_trash/*" \
+  ! -path "*/_unsupported/*" \
+  -name "*.md" | xargs -I{} basename {} | sort | uniq -c | sort -rn | awk '$1 > 1'
 
-# Empty directories
-find {TARGET} -type d -empty ! -path "*/.*" | wc -l
+# Empty directories (excluding system)
+find {TARGET} -type d -empty \
+  ! -path "*/_index/*" \
+  ! -path "*/_inbox/*" \
+  ! -path "*/_trash/*" \
+  ! -path "*/_unsupported/*" \
+  ! -path "*/.git/*" \
+  ! -path "*/.*" | wc -l
 
 # Inbox pending
 ls {TARGET}/_inbox/pending/ 2>/dev/null | wc -l
@@ -58,7 +82,15 @@ Date: YYYY-MM-DD
 |--------|-------|
 | Total files (.md) | X |
 | Total directories | X |
-| Agent directories | X |
+| Total file types | X |
+
+## System Infrastructure
+| Directory | Status |
+|-----------|--------|
+| _index/ | ✅/❌ |
+| _inbox/ | ✅/❌ (X pending) |
+| _trash/ | ✅/❌ (X files) |
+| _unsupported/ | ✅/❌ |
 
 ## Latest Score
 | Item | Value |
@@ -66,6 +98,13 @@ Date: YYYY-MM-DD
 | Overall Score | XX/100 |
 | Status | [STATUS] |
 | Last Scored | YYYY-MM-DD |
+
+## Your Folder Structure (Discovered)
+| Directory | Files |
+|-----------|-------|
+| folder-a/ | X |
+| folder-b/ | X |
+| folder-c/subfolder/ | X |
 
 ## Quick Checks
 | Item | Status |
@@ -76,21 +115,6 @@ Date: YYYY-MM-DD
 | Duplicate files | X groups |
 | Empty directories | X |
 | Pending in inbox | X |
-
-## Directory Structure
-```
-{TARGET}/
-├── _index/       | ✅/❌
-├── _inbox/       | ✅/❌
-├── _trash/       | ✅/❌
-├── knowledge/    | ✅/❌
-├── projects/     | ✅/❌ (if exists)
-└── private/      | ✅/❌ (if exists)
-```
-
-## Recent Issues (Last Score)
-- [Issue 1]
-- [Issue 2]
 
 ## Next Recommended Action
 [Based on current state and last score]
@@ -105,7 +129,7 @@ Date: YYYY-MM-DD
 | ❌ | Missing / Problem |
 | — | Not applicable / Skipped |
 
-## Quick Health判断
+## Health判断
 
 Based on stats and checks:
 

@@ -4,9 +4,15 @@ Core rules to prevent document repository entropy and maintain order.
 
 ---
 
+## Core Philosophy
+
+**Content-based organization, not folder-based rules.** Doctidy analyzes WHAT your files ARE (content, type, topic) rather than enforcing predefined folder structures. It works with YOUR organization.
+
+---
+
 ## File Readability
 
-### Claude Can Read (Auto-Categorizable)
+### Claude Can Read (Content Analysis Available)
 
 | Category | Extensions |
 |----------|------------|
@@ -48,7 +54,7 @@ Files are **completely ignored** - no tracking, no categorization, keep as-is:
 
 **Rule**: All new text files should go to `{TARGET}/_inbox/pending/`
 
-**Why**: Centralized entry point makes categorization easier. Files in proper locations are harder to track and organize.
+**Why**: Centralized entry point makes categorization easier.
 
 **For Agents**:
 ```
@@ -72,13 +78,13 @@ Agent creates new file → Move to {TARGET}/_inbox/pending/
 
 ### 3. No Scattering
 
-**Rule**: No text files in root directory or outside proper categories.
+**Rule**: No text files in root directory outside proper categories.
 
 **Allowed Locations**:
 - `{TARGET}/_inbox/pending/` (staging)
 - `{TARGET}/_trash/` (deleted staging)
 - `{TARGET}/_unsupported/` (manual processing - temporary)
-- Category directories (knowledge/, projects/, etc.)
+- YOUR category directories (whatever structure you have)
 
 **Penalty**: Scattered files reduce entropy control score.
 
@@ -104,7 +110,7 @@ Agent creates new file → Move to {TARGET}/_inbox/pending/
 
 **Rule**: When duplicates found, process promptly.
 
-**Duplicate Definition**: Files with same basename AND same readable type. `report.md` and `report.pdf` are NOT duplicates (different types, one is readable, one is not).
+**Duplicate Definition**: Files with same basename AND same readable type. `report.md` and `report.pdf` are NOT duplicates (different types).
 
 **Options**:
 1. Keep readable format (.md), move others to trash
@@ -153,51 +159,36 @@ lastUsed: YYYY-MM-DD
 
 ## Directory Conventions
 
-### Standard Structure
+### Universal Structure
+
+Doctidy does NOT enforce any folder structure. Your structure is discovered by scanning:
 
 ```
 {TARGET}/
-├── _index/           # Index and config
-│   ├── registry.yaml
+├── [your-folder-1]/           # Discovered by scan
+├── [your-folder-2]/           # Discovered by scan
+├── [subfolder/]/              # Discovered by scan
+├── _index/                    # Doctidy system
+│   ├── registry.yaml          # YOUR structure recorded
 │   └── score.md
-├── _inbox/           # Entry point
+├── _inbox/                    # Doctidy system
 │   └── pending/
-├── _trash/           # Deletion staging (30-day retention)
-├── _unsupported/     # Manual processing required
-│   └── README.txt    # Instructions for manual review
-├── knowledge/        # Knowledge base
-│   ├── agents/       # AI agent directories
-│   ├── reading/
-│   ├── progress/
-│   ├── methodology/
-│   └── ...
-├── projects/         # Project docs
-└── private/          # Sensitive data
+├── _trash/                    # Doctidy system
+├── _unsupported/              # Doctidy system
+└── README.md                  # Optional
 ```
 
 ### Naming Conventions
 
 | Type | Convention | Example |
 |------|------------|---------|
-| Directories | kebab-case or CN | `demand-mining`, `需求挖掘` |
-| Files | kebab-case + date | `progress-2026-03.md` |
+| Directories | Whatever you use | `work/`, `notes/`, `archive/` |
+| Files | Consistent pattern | `report-2026-03.md`, `notes-daily.md` |
 | Dates | ISO 8601 | `YYYY-MM-DD` |
-| Agent dirs | lowercase | `flowstage`, `scaptain` |
 
-### Language Consistency
+### Language
 
-**Option A**: All English
-- Pro: Consistent, developer-friendly
-- Con: May feel unnatural for Chinese content
-
-**Option B**: All Chinese
-- Pro: Natural for Chinese content
-- Con: Harder for international collaboration
-
-**Option C**: Mixed (current recommendation)
-- Category names: Chinese (familiar)
-- File names: English or descriptive
-- Agent names: lowercase English
+Your documents can be in any language. Doctidy analyzes content regardless of language.
 
 ---
 
@@ -207,21 +198,19 @@ lastUsed: YYYY-MM-DD
 
 ```
 1. Read {TARGET}/README.md (if exists)
-2. Read {TARGET}/_index/registry.yaml (if exists)
+2. Read {TARGET}/_index/registry.yaml (YOUR structure)
 3. Check _inbox/pending/ for new files
 4. Do work
-5. Save output to appropriate location
+5. Save output to appropriate location (based on content)
 6. If unsure → _inbox/pending/
 7. If output is non-readable (.pdf, .docx, etc.) → _unsupported/
 ```
 
 ### Agent Responsibilities
 
-- Create files in proper locations
+- Create files in proper locations based on content
 - Use readable formats when possible (.md over .docx)
 - Put non-readable outputs to `{TARGET}/_unsupported/`
-- Update registry if modifying structure
-- Report issues via score command
 - Follow entropy control rules
 
 ---
@@ -242,9 +231,8 @@ lastUsed: YYYY-MM-DD
 
 ### Index Corruption
 
-1. Run `analyze` to get current state
-2. Run `organize` to fix issues
-3. Regenerate registry.yaml
+1. Run `/doctidy "init"` to rescan and rebuild index
+2. Registry.yaml will be regenerated from your current structure
 
 ---
 
@@ -266,4 +254,3 @@ lastUsed: YYYY-MM-DD
 When creating new files:
 - Prefer readable formats (.md, .txt, .json) over non-readable (.pdf, .docx)
 - This allows Claude to intelligently categorize and assist
-
