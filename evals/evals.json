@@ -1,0 +1,47 @@
+{
+  "skill_name": "doctidy",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Score my document repository",
+      "expected_output": "Contains overall score, dimension scores, issues list, and recommendations",
+      "assertions": [
+        "Contains overall score (XX/100)",
+        "Contains structure rationality score",
+        "Contains entropy control score",
+        "Contains issues list",
+        "Contains recommendations"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze the document directory and find issues",
+      "expected_output": "Contains duplicate file analysis, scattered files, empty directories report",
+      "assertions": [
+        "Lists duplicate filenames",
+        "Lists scattered file locations",
+        "Contains recommendations"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "What's the status of my document repository?",
+      "expected_output": "Quick status report with file count, directory count, score summary",
+      "assertions": [
+        "Contains total file count",
+        "Contains total directory count",
+        "Contains quick checks"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Process new files in the inbox pending folder",
+      "expected_output": "Categorize inbox files and output categorization suggestions",
+      "assertions": [
+        "Scans _inbox/pending/ directory",
+        "Provides categorization suggestion for each file",
+        "Includes mechanism for un-categorizable files"
+      ]
+    }
+  ]
+}
