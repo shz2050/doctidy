@@ -1,19 +1,20 @@
 ---
 name: doctidy
-description: Document tidying and organization tool. Triggered when users mention document organization, scoring, cleanup, entropy control, auto-categorization, file intake, or managing a document directory. Helps maintain document order, provide organization scores, perform cleanup, and auto-categorize new files.
+description: Document tidying and organization tool with content-based search. Triggered when users mention document organization, scoring, cleanup, entropy control, auto-categorization, file intake, or searching documents. Helps maintain document order, provide organization scores, perform cleanup, auto-categorize new files, and search by content keywords.
 ---
 
 # Doctidy
 
-A document tidying skill that brings order to chaos - providing scoring, analysis, organization, and intake commands.
+A document tidying skill that brings order to chaos - providing content-based search, scoring, analysis, organization, and intake commands.
 
-> **For AI Agents & Humans**: Helps manage document directories by providing scoring, analysis, cleanup, and auto-categorization. Designed for both AI Agents and human users working in shared document spaces.
+> **Agent-First Design**: Built for AI agents to quickly find documents by content, not just folder structure. Each document is indexed with summary and keywords for intelligent search.
 
 ## Quick Start
 
 | Command | Trigger Words | Description |
 |---------|--------------|-------------|
-| `/doctidy "init"` | init, initialize, setup, install | Initialize doctidy infrastructure |
+| `/doctidy "init"` | init, initialize, setup, install | Initialize infrastructure + build content index |
+| `/doctidy "search"` | search, find, query, lookup | Search documents by content keywords |
 | `/doctidy "score"` | score, scoring, rate, health check | Score the document repository |
 | `/doctidy "analyze"` | analyze, diagnose, audit | Deep analysis of issues |
 | `/doctidy "organize"` | organize, cleanup, clean up | Execute cleanup operations |
@@ -40,14 +41,13 @@ Path is determined by (in order of priority):
 ```
 {TARGET}/
 ├── _index/
-│   ├── registry.yaml    # Directory index configuration
-│   └── score.md         # Latest scoring report
+│   └── registry.yaml    # Content index with summaries & keywords
 ├── _inbox/
 │   └── pending/        # New file entry point
 ├── _trash/             # Deletion staging area
 ├── _unsupported/       # Files requiring manual processing
 │   └── README.txt      # Instructions for manual review
-└── README.md           # Entry documentation
+└── [your documents]    # Your actual documents
 ```
 
 ---
@@ -93,42 +93,48 @@ These files are **completely ignored** - no tracking, no categorization, keep as
 ## Commands Overview
 
 ### 1. Init
-Initialize doctidy infrastructure in a directory.
+Initialize doctidy infrastructure and build content index.
 - **Triggers**: init, initialize, setup, install
-- **Output**: Creates _index/, _inbox/, _trash/, _unsupported/ etc.
+- **Output**: Creates _index/, _inbox/, _trash/, _unsupported/, builds content index
 - **Load**: `commands/init.md` for initialization procedures
 
-### 2. Score
+### 2. Search (NEW)
+Search documents by content, keywords, and summaries.
+- **Triggers**: search, find, query, lookup
+- **Output**: Matching documents with summaries
+- **Load**: `commands/search.md` for search details
+
+### 3. Score
 Evaluate and score the document repository.
 - **Triggers**: score, scoring, rate, grade, current status, health check
 - **Output**: Scoring report with dimension scores and recommendations
 - **Load**: `commands/score.md` for detailed scoring criteria
 
-### 3. Analyze
+### 4. Analyze
 In-depth analysis of document repository issues.
 - **Triggers**: analyze, diagnose, audit
 - **Output**: Analysis report with specific recommendations
 - **Load**: `commands/analyze.md` for detailed analysis rules
 
-### 4. Organize
+### 5. Organize
 Execute automatic cleanup operations.
 - **Triggers**: organize, cleanup, clean up, fix
 - **Recommended**: Run `analyze` first to understand issues
 - **Load**: `commands/organize.md` for detailed operations
 
-### 5. Intake
+### 6. Intake
 Process new file entry, auto-categorize or ask for direction.
 - **Triggers**: intake, categorize, file intake, process new files, sort files
 - **Output**: Categorization suggestions and move operations
 - **Load**: `commands/intake.md` for categorization rules
 
-### 6. Status
+### 7. Status
 Quick view of document repository status.
 - **Triggers**: status, quick status, directory status
 - **Output**: Quick status report with stats and checks
 - **Load**: `commands/status.md` for status format
 
-### 7. Reset
+### 8. Reset
 Remove all doctidy created files and directories.
 - **Triggers**: reset, uninstall, remove indexes
 - **Warning**: This removes all skill-created files
@@ -162,7 +168,8 @@ Remove all doctidy created files and directories.
 
 | File | Purpose | Load When |
 |------|--------|-----------|
-| `commands/init.md` | Initialization procedures | Init command |
+| `commands/init.md` | Initialization + content index | Init command |
+| `commands/search.md` | Content-based search | Search command |
 | `commands/score.md` | Scoring criteria | Score command |
 | `commands/analyze.md` | Analysis rules | Analyze command |
 | `commands/organize.md` | Cleanup operations | Organize command |
